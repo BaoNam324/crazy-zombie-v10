@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "electron:dev": "vite build && electron .",
-    "build:exe": "tsc --noEmit && vite build && electron-builder --win portable nsis"
+    "build:exe": "tsc --noEmit && vite build && electron-builder --win portable nsis --publish never"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
