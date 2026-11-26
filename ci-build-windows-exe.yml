@@ -1,0 +1,38 @@
+name: Build Windows EXE (Crazy Zombie 10.0)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies (Phaser + Electron + Vite)
+        run: npm install
+      - name: Build TypeScript & Package Windows Portable/NSIS EXE
+        run: npm run build:exe
+      - name: Upload Windows EXE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Crazy-Zombie-10.0-Windows-EXE
+          path: release/*.exe
+      - name: Publish Direct Download Release (v10.0.0)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v10.0.0
+          name: Crazy Zombie 10.0 — Windows EXE (Portable & Installer)
+          body: |
+            Bản phát hành Windows `.exe` tự động biên dịch cho **Crazy Zombie 10.0**.
+            Tải file `.exe` bên dưới và nháy đúp mở chơi trực tiếp trên Windows!
+          files: release/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
