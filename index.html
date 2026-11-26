@@ -3,24 +3,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Crazy Zombie 10.0 — Multiverse Outbreak</title>
+  <title>Crazy Zombie 10.0 — Fanmade Studio Edition (Ruffle Engine)</title>
+  <script src="./ruffle/ruffle.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 100%; height: 100%;
       background: #08090c;
+      color: #f8fafc;
       overflow: hidden;
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
       user-select: none;
+      display: flex;
+      flex-direction: column;
     }
-    #game-root {
-      width: 100vw; height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+    #studio-bar {
+      height: 44px;
+      background: linear-gradient(180deg, #242b38 0%, #10131b 100%);
+      border-bottom: 2px solid #d4af37;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 8px;
+      z-index: 50;
+      flex-shrink: 0;
     }
+    .brand-tag {
+      font-family: Impact, system-ui, sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.6px;
+      color: #ff5733;
+      text-shadow: 0 2px 4px #000;
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+    .bar-group { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+    .arc-btn {
+      background: linear-gradient(180deg, #262e3d 0%, #121620 100%);
+      color: #e2e8f0;
+      border: 1.5px solid #475569;
+      padding: 5px 10px;
+      font-family: monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s ease;
+      white-space: nowrap;
+    }
+    .arc-btn:hover { border-color: #facc15; color: #facc15; }
+    .arc-btn.active {
+      background: linear-gradient(180deg, #991b1b 0%, #450a0a 100%);
+      border-color: #facc15;
+      color: #facc15;
+      box-shadow: inset 0 0 8px rgba(250, 204, 21, 0.25);
+    }
+    #ruffle-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #141824 0%, #06070a 100%);
+      overflow: hidden;
+    }
+    #ruffle-stage { width: 100%; height: 100%; max-width: 100%; max-height: 100%; position: relative; }
+    #ruffle-stage.aspect-43 {
+      width: auto; aspect-ratio: 4 / 3;
+      box-shadow: 0 0 36px rgba(212, 175, 55, 0.25);
+      border-left: 2px solid #d4af37; border-right: 2px solid #d4af37;
+    }
+    #ruffle-stage.filter-sharp { filter: contrast(1.06) saturate(1.08); }
+    #ruffle-stage.filter-crt { filter: contrast(1.16) saturate(1.2) brightness(1.04); }
+    #ruffle-stage.filter-night { filter: contrast(1.12) saturate(1.18) drop-shadow(0 0 18px rgba(255, 87, 51, 0.35)); }
+    #crt-overlay {
+      display: none; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);
+    }
+    #swf-missing-card {
+      display: none; position: absolute; inset: 0; align-items: center; justify-content: center;
+      z-index: 30; background: rgba(8, 10, 15, 0.94);
+    }
+    .missing-box {
+      width: 620px; padding: 28px;
+      background: linear-gradient(180deg, #1d2330 0%, #0b0e14 100%);
+      border: 2px solid #d4af37; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85); text-align: center;
+    }
+    .missing-box h2 { font-family: Impact, system-ui; font-size: 26px; color: #facc15; margin-bottom: 12px; }
+    .missing-box p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 18px; }
+    .missing-box .primary-btn {
+      background: linear-gradient(180deg, #dc2626 0%, #7f1d1d 100%);
+      border: 2px solid #facc15; color: #fff; font-family: Impact, system-ui; font-size: 18px; padding: 10px 24px; cursor: pointer;
+    }
+    #game-root { flex: 1; display: none; align-items: center; justify-content: center; overflow: hidden; }
     canvas { display: block; box-shadow: 0 0 48px rgba(255, 68, 34, 0.22); }
   </style>
 </head>
 <body>
+  <header id="studio-bar">
+    <div class="bar-group">
+      <span class="brand-tag">CRAZY ZOMBIE 10.0</span>
+      <button id="tab-original" class="arc-btn active">🔥 LÕI GỐC 9.0→10.0 (RUFFLE)</button>
+      <button id="tab-expansion" class="arc-btn">⚔ MỞ RỘNG v10.0 (ZORO · GOJO · 5 BOSS MỚI)</button>
+    </div>
+    <div class="bar-group">
+      <button id="btn-filter" class="arc-btn">✨ BỘ LỌC: SHARP HD</button>
+      <button id="btn-aspect" class="arc-btn">📐 TỶ LỆ: 16:9 FULL</button>
+      <button id="btn-gamepad" class="arc-btn">🎮 TAY CẦM: BẬT</button>
+      <button id="btn-pick-swf" class="arc-btn">📂 NẠP SWF GỐC</button>
+      <button id="btn-fullscreen" class="arc-btn">⛶ FULL</button>
+      <button id="btn-hide-bar" class="arc-btn" title="Nhấn F1 để ẩn/hiện thanh này">▲ [F1]</button>
+    </div>
+  </header>
+
+  <main id="ruffle-wrapper">
+    <div id="ruffle-stage" class="filter-sharp"></div>
+    <div id="crt-overlay"></div>
+    <div id="swf-missing-card">
+      <div class="missing-box">
+        <h2>NẠP LÕI GAME GỐC CRAZY ZOMBIE 9.0 → 10.0</h2>
+        <p>
+          Bộ máy <strong>Ruffle Engine (Rust/WASM)</strong> đã sẵn sàng thay thế Adobe Flash!<br/>
+          Để chạy 100% lõi gốc giữ nguyên toàn bộ animation, hãy chọn thư mục chứa 3 tệp
+          <code>Mike.swf</code>, <code>lib.swf</code>, <code>snd.swf</code> (hoặc đặt chúng vào thư mục <code>swf/</code> cạnh file <code>.exe</code>).
+        </p>
+        <button id="btn-pick-swf-fallback" class="primary-btn">📂 CHỌN THƯ MỤC CHỨA MIKE.SWF NGAY</button>
+      </div>
+    </div>
+  </main>
+
   <div id="game-root"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>

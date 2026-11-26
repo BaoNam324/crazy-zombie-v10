@@ -2,16 +2,17 @@
   "name": "crazy-zombie-v10",
   "version": "10.0.0",
   "author": "BaoNam324",
-  "description": "Crazy Zombie 10.0 — 2.5D Arcade Beat 'em Up (Phaser 3 + TypeScript + Electron + Supabase)",
+  "description": "Crazy Zombie 10.0 — Fanmade Studio Edition (Ruffle Rust/WASM Engine + Original Mike.swf + v10.0 Expansion)",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/copy-ruffle.cjs",
     "preview": "vite preview",
-    "electron:dev": "vite build && electron .",
-    "build:exe": "tsc --noEmit && vite build && electron-builder --win portable nsis --publish never"
+    "electron:dev": "npm run build && electron .",
+    "build:exe": "npm run build && electron-builder --win portable nsis --publish never"
   },
   "dependencies": {
+    "@ruffle-rs/ruffle": "latest",
     "@supabase/supabase-js": "^2.49.1",
     "phaser": "^3.90.0"
   },
@@ -29,7 +30,7 @@
     },
     "files": [
       "dist/**/*",
-      "electron/main.cjs",
+      "electron/**/*",
       "package.json"
     ],
     "win": {
