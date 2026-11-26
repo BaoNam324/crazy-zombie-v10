@@ -1,0 +1,9 @@
+{
+  "version": "10.0.0-studio",
+  "engine": "Phaser 3.90 LTS / Phaser 4 Compatible",
+  "fps": 60,
+  "depthTolerancePx": 28,
+  "juggleDecayThreshold": 6,
+  "wallBounceMaxPerCombo": 1,
+  "parryWindowFrames": 6
+}
