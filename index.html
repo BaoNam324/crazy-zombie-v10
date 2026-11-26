@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Crazy Zombie 10.0 — Multiverse Outbreak</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #08090c;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      user-select: none;
+    }
+    #game-root {
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    canvas { display: block; box-shadow: 0 0 48px rgba(255, 68, 34, 0.22); }
+  </style>
+</head>
+<body>
+  <div id="game-root"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
