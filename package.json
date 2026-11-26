@@ -1,6 +1,7 @@
 {
   "name": "crazy-zombie-v10",
   "version": "10.0.0",
+  "author": "BaoNam324",
   "description": "Crazy Zombie 10.0 — 2.5D Arcade Beat 'em Up (Phaser 3 + TypeScript + Electron + Supabase)",
   "main": "electron/main.cjs",
   "scripts": {
@@ -8,7 +9,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "electron:dev": "vite build && electron .",
-    "build:exe": "tsc --noEmit && vite build && electron-builder --win nsis portable"
+    "build:exe": "tsc --noEmit && vite build && electron-builder --win portable nsis"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -32,6 +33,7 @@
       "package.json"
     ],
     "win": {
+      "signAndEditExecutable": false,
       "target": [
         "portable",
         "nsis"
